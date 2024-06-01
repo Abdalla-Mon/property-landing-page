@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/dashboard.css" rel="stylesheet" type="text/css">
+    <title>Dashboard</title>
+</head>
+<body>
+<div class="page-content" style="display: none;">
+
+<div class="navbar">
+    <a href="../index.html" class="tablink" id="defaultOpen">الصفحه الرئيسة</a>
+    <a href="/dashboard/projects.html" class="tablink">صفحة عرض المشاريع</a>
+</div>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="text" name="projectName" placeholder="اسم المشروع">
+    <textarea name="aboutProject" placeholder="عن المشروع"></textarea>
+    <div id="featuresContainer">
+        <h3>مميزات المشروع</h3>
+        <button type="button" id="addFeatureBtn" class="smallBtn">اضف ميزة</button>
+    </div>
+
+    <div id="servicesContainer">
+        <h3>خدمات الموقع</h3>
+        <button type="button" id="addServiceBtn" class="smallBtn">اضف خدمة</button>
+    </div>
+
+    <div id="imagesContainer">
+        <h3>صور المشروع</h3>
+        <div id="imagePreviewContainer"></div>
+        <label for="imageInput" class="customFileInput smallBtn">اضف صوره</label>
+        <input type="file" id="imageInput" style="display:none">
+    </div>
+
+    <input type="text" name="projectVideo" id="videoInput" placeholder="رابط الفيديو">
+    <button type="submit">تحميل مشروع</button>
+</form>
+<div    id="loader">
+
+<div >جاري التحميل....</div>
+</div>
+<div id="alertBox">
+    <p id="alertMessage"></p>
+    <button class="closeBtn">اغلاق</button>
+</div></div>
+
+<script type="module" src="../js/dashboard.js"></script>
+</body>
+</html>
