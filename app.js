@@ -15,14 +15,19 @@ const storage = multer.diskStorage({
         cb(null, 'public/uploads/');
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+        // Use the timestamp and the original filename to ensure uniqueness
+        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+        const extension = path.extname(file.originalname);
+        const baseName = path.basename(file.originalname, extension);
+        cb(null, `${baseName}-${uniqueSuffix}${extension}`);
     }
 });
+
 const upload = multer({ storage: storage });
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public"))); // Ensure static files are served correctly
 
 // Middleware to check the token
 function authenticateToken(req, res, next) {
@@ -39,7 +44,7 @@ function authenticateToken(req, res, next) {
 }
 
 app.route('/api/projects')
-      .get(authenticateToken, async (req, res) => {
+      .get(async (req, res) => { // No auth check for GET projects
           try {
               const projects = await services.getProjects();
               res.json(projects);
@@ -49,33 +54,39 @@ app.route('/api/projects')
           }
       })
       .post(authenticateToken, upload.array('files'), async (req, res) => {
-          console.log(req.body, req.files)
+
           try {
               const project = await services.createProject(req.body, req.files);
               res.json({ message: 'تم إنشاء المشروع بنجاح', project });
           } catch (err) {
               console.error(err);
-              res.status(500).json({ message: 'خطأ في الخادم. حاول مرة أخرى لاحقًا.' });
+              res.status(500).json({ message: `خطأ: ${err.message}` });
           }
       })
       .put(authenticateToken, upload.array('files'), async (req, res) => {
+
           try {
-              const project = await services.updateProject(req.body.id, req.body, req.files);
+              // Parse editedPaths JSON string if present
+              if (typeof req.body.editedPaths === 'string') {
+                  req.body.editedPaths = JSON.parse(req.body.editedPaths);
+              }
+              const project = await services.updateProject(req.body.id, req.body, req.files, req.body.editedPaths);
               res.json({ message: 'تم تحديث المشروع بنجاح', project });
           } catch (err) {
-              console.error(err);
-              res.status(500).json({ message: 'خطأ في الخادم. حاول مرة أخرى لاحقًا.' });
-          }
-      })
-      .delete(authenticateToken, async (req, res) => {
-          try {
-              await services.deleteProject(req.body.id);
-              res.json({ message: 'تم حذف المشروع بنجاح' });
-          } catch (err) {
-              console.error(err);
-              res.status(500).json({ message: 'خطأ في الخادم. حاول مرة أخرى لاحقًا.' });
+              console.error('Error updating project:', err);
+              res.status(500).json({ message: `خطأ: ${err.message}` });
           }
       });
+    app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
+        try {
+
+            await services.deleteProject(req.params.id);
+            res.json({ message: 'تم حذف المشروع بنجاح' });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'خطأ في الخادم. حاول مرة أخرى لاحقًا.' });
+        }
+    });
 
 app.post('/api/register', async (req, res) => {
     try {

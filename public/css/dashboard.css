@@ -1,119 +1,118 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    color: #223233;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
     margin: 0;
     padding: 0;
+    line-height: 1.6;
 }
-
+.page-content{
+    display:none;
+}
+/* Navbar Styles */
 .navbar {
-    overflow: auto;
-    background-color: #445372;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    background-color: #33475b;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar a {
-    float: left;
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
+    color: #fff;
     text-decoration: none;
-    font-size: 17px;
-    width: fit-content;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
 }
 
 .navbar a:hover {
-    background-color: #a3917b;
-    color: white;
+    background-color: #496581;
 }
 
+/* Form Styles */
 form {
-    max-width: 600px;
+    max-width: 700px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-input[type="text"], textarea, button {
+input[type="text"], textarea, button, .customFileInput {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
-    border: none;
+    border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    font-size: 1rem;
+    color: #333;
 }
 
-input[type="text"], textarea {
-    background-color: #f9f9f9;
-    color: #223233;
-    border: 1px solid #8a7862;
+textarea {
+    height: 100px;
+    resize: vertical;
 }
 
 button {
-    background-color: #445372;
-    color: #ffffff;
+    background-color: #33475b;
+    color: #fff;
     cursor: pointer;
     font-weight: bold;
+    border: none;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #a3917b;
-    color: #ffffff;
+    background-color: #496581;
 }
 
+/* Custom Button Styles */
 .smallBtn {
     width: auto;
-    padding: 5px 10px;
-    margin: 5px 0;
-    font-size: 0.9em;
-}
-
-.smallBtn:hover {
-    background-color: #a3917b !important;
+    padding: 8px 16px;
+    font-size: 0.9rem;
 }
 
 .customFileInput {
     display: inline-block;
-    padding: 10px;
-    cursor: pointer;
-    background-color: #445372;
-    color: #ffffff;
-    border-radius: 4px;
     text-align: center;
-}
-
-.customFileInput:hover {
-    background-color: #a3917b;
+    cursor: pointer;
+    background-color: #33475b;
+    color: #fff;
 }
 
 .featureServiceContainer, .imageContainer {
     position: relative;
     display: inline-block;
-    margin: 5px;
+    margin: 10px 0;
+}
+.featureServiceContainer{
+    width: 100%;
+    margin: 0;
 }
 
 .removeBtn {
-    background-color: #d08d74;
-    color: #ffffff;
+    background-color: #e74c3c;
+    color: #fff;
     border: none;
-    padding: 2px 6px;
+    padding: 5px;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     border-radius: 50%;
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 0;
+    left: 0;
     width: 25px;
     height: 25px;
+    margin: 0px;
 }
 
 .removeBtn:hover {
-    background-color: #8a7862;
+    background-color: #c0392b;
 }
 
 .loader-container {
@@ -127,15 +126,13 @@ button:hover {
     display: none;
     width: 100%;
     text-align: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
     position: fixed;
     font-size: 2rem;
-    font-weight: bold;
     top: 0;
     left: 0;
     z-index: 1000;
-    border-radius: 4px;
     justify-content: center;
     align-items: center;
     height: 100%;
@@ -146,8 +143,8 @@ button:hover {
     width: fit-content;
     text-align: center;
     padding: 20px;
-    background-color: #445372; /* Default background color for success */
-    color: #ffffff;
+    background-color: #33475b;
+    color: #fff;
     margin-top: 20px;
     border-radius: 4px;
     position: fixed;
@@ -158,22 +155,22 @@ button:hover {
 }
 
 #alertBox.error {
-    background-color: #d9534f; /* Red background color for errors */
+    background-color: #e74c3c;
 }
 
 #alertBox .closeBtn {
-    background-color: #d08d74;
-    color: #ffffff;
+    background-color: #c0392b;
+    color: #fff;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     border-radius: 4px;
     margin-top: 10px;
 }
 
 #alertBox .closeBtn:hover {
-    background-color: #8a7862;
+    background-color: #a8322a;
 }
 
 #imagePreviewContainer {
@@ -182,25 +179,10 @@ button:hover {
     gap: 10px;
 }
 
-#addFeatureBtn, #addServiceBtn {
-    background-color: #445372;
-    color: #ffffff;
-    cursor: pointer;
-    font-weight: bold;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    margin: 10px 0;
-}
-
-.featureServiceContainer {
-    width: 100%;
-    max-width: 600px;
-}
-
 .previewImage {
     width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

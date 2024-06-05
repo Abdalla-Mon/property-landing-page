@@ -1,0 +1,102 @@
+/* Container Styles */
+.page-content{
+    display:none;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Card Styles */
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #33475b;
+}
+
+.card p {
+    margin: 10px 0;
+    color: #666;
+}
+
+/* Button Styles */
+.card .deleteBtn, .saveBtn, .cancelBtn {
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+
+.card .deleteBtn {
+    background-color: #e74c3c;
+}
+
+.card .deleteBtn:hover {
+    background-color: #c0392b;
+}
+
+.card .removeBtn {
+    background-color: #e74c3c;
+}
+
+.card .removeBtn:hover {
+    background-color: #c0392b;
+}
+
+.saveBtn {
+    background-color: #33475b;
+}
+
+.saveBtn:hover {
+    background-color: #496581;
+}
+
+.cancelBtn {
+    background-color: #7f8c8d;
+}
+
+.cancelBtn:hover {
+    background-color: #707b7c;
+}
+
+.button-container {
+    display: flex;
+    gap: 20px;
+}
+
+/* Form Container Styles */
+.form-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container input, .form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.previewImage {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

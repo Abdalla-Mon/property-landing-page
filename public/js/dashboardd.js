@@ -1,7 +1,7 @@
-import { checkAuth } from "./checkauth.js"
+import { checkAdminAuth } from "./checkAdminAuth.js"
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await checkAuth();
+    await checkAdminAuth();
 
     const featuresContainer = document.getElementById('featuresContainer');
     const servicesContainer = document.getElementById('servicesContainer');
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const alertMessage = document.getElementById('alertMessage');
     const closeBtn = document.querySelector('.closeBtn');
     const loader = document.getElementById('loader');
+    const errorMessage = document.getElementById('errorMessage');
 
     let featuresArray = [];
     let servicesArray = [];
@@ -100,20 +101,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('uploadForm').addEventListener('submit', async function(event) {
         event.preventDefault();
-        const formData = new FormData();
-        const videoInput = document.getElementById('videoInput');
+        errorMessage.style.display = 'none'; // Hide the error message
 
+        const projectName = document.getElementsByName('projectName')[0].value;
+        const aboutProject = document.getElementsByName('aboutProject')[0].value;
+        const videoInput = document.getElementById('videoInput').value;
+        const features = featuresArray.map(div => div.querySelector('input').value);
+        const services = servicesArray.map(div => div.querySelector('input').value);
+
+        if (!projectName || !aboutProject || !videoInput || features.length === 0 || services.length === 0 || imagesArray.length === 0) {
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        const formData = new FormData();
         imagesArray.forEach(file => {
             formData.append('files', file);
         });
 
-        formData.append('video', videoInput.value);
-        formData.append('projectName', document.getElementsByName('projectName')[0].value);
-        formData.append('aboutProject', document.getElementsByName('aboutProject')[0].value);
-
-        const features = featuresArray.map(div => div.querySelector('input').value);
-        const services = servicesArray.map(div => div.querySelector('input').value);
-
+        formData.append('video', videoInput);
+        formData.append('projectName', projectName);
+        formData.append('aboutProject', aboutProject);
         formData.append('projectFeatures', JSON.stringify(features));
         formData.append('locationServices', JSON.stringify(services));
 
@@ -137,8 +145,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alertBox.style.display = 'block';
             } else {
                 const errorText = await response.text();
-                console.error('فشل في التحميل:', errorText);
-                alertMessage.textContent = 'فشل في التحميل: ' + errorText;
+                console.error('فشل في التحميل:', JSON.parse(errorText).message);
+                alertMessage.textContent = 'فشل في التحميل: ' + JSON.parse(errorText).message
                 alertBox.style.backgroundColor = '#d9534f'; // Bootstrap danger color
                 alertBox.style.display = 'block';
             }

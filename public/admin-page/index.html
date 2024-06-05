@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/dashboard.css" rel="stylesheet" type="text/css">
-    <title>Dashboard</title>
+    <title>صفحة الادمن</title>
 </head>
 <body>
-<div class="page-content" style="display: none;">
+<div class="page-content" >
 
 <div class="navbar">
     <a href="../index.html" class="tablink" id="defaultOpen">الصفحه الرئيسة</a>
-    <a href="/dashboard/projects.html" class="tablink">صفحة عرض المشاريع</a>
+    <a href="/admin-page/admin-projects.html" class="tablink">صفحة عرض المشاريع</a>
 </div>
 
 <form id="uploadForm" enctype="multipart/form-data">
@@ -36,6 +36,7 @@
 
     <input type="text" name="projectVideo" id="videoInput" placeholder="رابط الفيديو">
     <button type="submit">تحميل مشروع</button>
+<div id="errorMessage" style="color: red; display: none;">الرجاء ملء جميع الحقول.</div>
 </form>
 <div    id="loader">
 
@@ -46,6 +47,6 @@
     <button class="closeBtn">اغلاق</button>
 </div></div>
 
-<script type="module" src="../js/dashboard.js"></script>
+<script type="module" src="../js/dashboardd.js"></script>
 </body>
 </html>

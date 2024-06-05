@@ -1,14 +1,17 @@
 const pool = require('./db');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
+const fs = require('fs');
 
 // Schema validation using Joi
 const projectSchema = Joi.object({
+    id: Joi.number().optional(), // Allow id for update
     projectName: Joi.string().max(255).required(),
     aboutProject: Joi.string().required(),
-    video: Joi.string().uri().optional(),
+    video: Joi.string().optional(),
     projectFeatures: Joi.array().items(Joi.string()).required(),
     locationServices: Joi.array().items(Joi.string()).required(),
+    editedPaths: Joi.array().items(Joi.string()).optional() // Allow editedPaths for update
 });
 
 const userSchema = Joi.object({
@@ -32,6 +35,13 @@ async function getProjects() {
 }
 
 async function createProject(data, files) {
+    // Parse JSON strings
+    data.projectFeatures = JSON.parse(data.projectFeatures);
+    data.locationServices = JSON.parse(data.locationServices);
+
+    // Log parsed data for debugging
+    console.log('Files:creation', files);
+
     const { error } = projectSchema.validate(data);
     if (error) {
         throw new Error(`Validation error: ${error.details[0].message}`);
@@ -52,7 +62,9 @@ async function createProject(data, files) {
     }
 
     for (const file of files) {
-        await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [projectId, file.path]);
+        console.log(file,"file")
+
+        await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [projectId, `/uploads/${file.filename}`]);
     }
 
     return getProjectById(projectId);
@@ -74,7 +86,14 @@ async function getProjectById(id) {
     return project;
 }
 
-async function updateProject(id, data, files) {
+async function updateProject(id, data, files, editedPaths) {
+    // Parse JSON strings
+    data.projectFeatures = JSON.parse(data.projectFeatures);
+    data.locationServices = JSON.parse(data.locationServices);
+
+    // Log parsed data for debugging
+    console.log('Files:', files);
+
     const { error } = projectSchema.validate(data);
     if (error) {
         throw new Error(`Validation error: ${error.details[0].message}`);
@@ -88,7 +107,6 @@ async function updateProject(id, data, files) {
     // Clear old features, services, and images
     await pool.query('DELETE FROM features WHERE projectId = ?', [id]);
     await pool.query('DELETE FROM services WHERE projectId = ?', [id]);
-    await pool.query('DELETE FROM images WHERE projectId = ?', [id]);
 
     // Insert new features
     for (const feature of data.projectFeatures) {
@@ -100,18 +118,47 @@ async function updateProject(id, data, files) {
         await pool.query('INSERT INTO services (projectId, service) VALUES (?, ?)', [id, service]);
     }
 
+    // Handle deleted image paths
+    if (editedPaths) {
+        for (const path of editedPaths) {
+            await pool.query('DELETE FROM images WHERE filePath = ?', [path]);
+            console.log(path)
+            fs.unlink(`public${path}`, (err) => {
+                if (err) console.error(`Error deleting file: ${path}`, err);
+            });
+        }
+    }
+
     // Insert new images
     for (const file of files) {
-        await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [id, file.path]);
+    console.log(file,"file")
+        await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [id, `/uploads/${file.filename}`]);
     }
 
     return getProjectById(id);
 }
 
 async function deleteProject(id) {
-    await pool.query('DELETE FROM projects WHERE id = ?', [id]);
-}
+    // Fetch the images associated with the project
+    const [images] = await pool.query('SELECT filePath FROM images WHERE projectId = ?', [id]);
 
+    // Delete the images from the file system
+    for (const image of images) {
+        console.log(image)
+        const path = image.filePath
+        fs.unlink(`public${path}`, (err) => {
+            if (err) console.error(`Error deleting file: ${path}`, err);
+        });
+    }
+
+    // Delete the images from the database
+    await pool.query('DELETE FROM images WHERE projectId = ?', [id]);
+
+    // Delete the project from the database
+    await pool.query('DELETE FROM projects WHERE id = ?', [id]);
+    await pool.query('DELETE FROM features WHERE projectId = ?', [id]);
+    await pool.query('DELETE FROM services WHERE projectId = ?', [id]);
+}
 // User services
 async function createUser(data) {
     const { error } = userSchema.validate(data);

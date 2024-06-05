@@ -1,15 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/main.css" rel="stylesheet" type="text/css">
-    <title>Coming Soon</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link href="/main.css" rel="stylesheet" type="text/css">
+    <title>الحياه العصريه</title>
 </head>
 <body>
-<div class="coming-soon-container">
-    <h1>Coming Soon</h1>
-    <p>Our website is under construction. We'll be here soon with our new awesome site.</p>
+<div class="page-content">
+    <header class="header-absolute">
+        <div class="container">
+            <div class="navbar">
+                <img src="/uploads/logo.png" alt="Logo" class="logo">
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#home">الصفحه الرئيسيه</a></li>
+                        <li><a href="#services">خدماتنا</a></li>
+                        <li><a href="#projects">المشاريع</a></li>
+                        <li><a href="#about">من نحن</a></li>
+                        <li><a href="#contact">تواصل معنا</a></li>
+                    </ul>
+                    <div class="menu-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="overlay" id="overlay"></div>
+        <div class="drawer open" id="drawer">
+            <button class="drawer-close">×</button>
+            <ul>
+                <li><a href="#home">الصفحه الرئيسيه</a></li>
+                <li><a href="#services">خدماتنا</a></li>
+                <li><a href="#projects">المشاريع</a></li>
+                <li><a href="#about">من نحن</a></li>
+                <li><a href="#contact">تواصل معنا</a></li>
+            </ul>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>أهلاً بكم في عالم إدارة العقارات</h1>
+            <p>اكتشفوا معنا تجربة فريدة من نوعها في إدارة الممتلكات، حيث نقدم لكم خدمات شاملة بأعلى معايير الاحترافية والموثوقية.</p>
+        </div>
+    </section>
+    <!-- projects Section -->
+    <section class="projects-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>المشاريع</h2>
+                
+            </div>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide project-card" style="background-image: url('https://code-theme.com/html/findhouses/images/interior/p-1.jpg');">
+                        <a href="#">
+                            <div class="card-content">
+                                <h3>عنوان المشروع</h3>
+                                <p>لوريم إيبسوم دولور سيت أميت، كونسيكتيتور أديب</p>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Repeat above div for more cards -->
+                    <div class="swiper-slide project-card" style="background-image: url('https://code-theme.com/html/findhouses/images/interior/p-1.jpg');">
+                        <a href="#">
+                            <div class="card-content">
+                                <h3>عنوان المشروع</h3>
+                                <p>لوريم إيبسوم دولور سيت أميت، كونسيكتيتور أديب</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="swiper-slide project-card" style="background-image: url('https://code-theme.com/html/findhouses/images/interior/p-1.jpg');">
+                        <a href="#">
+                            <div class="card-content">
+                                <h3>عنوان المشروع</h3>
+                                <p>لوريم إيبسوم دولور سيت أميت، كونسيكتيتور أديب</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="swiper-slide project-card" style="background-image: url('https://code-theme.com/html/findhouses/images/interior/p-1.jpg');">
+                        <a href="#">
+                            <div class="card-content">
+                                <h3>عنوان المشروع</h3>
+                                <p>لوريم إيبسوم دولور سيت أميت، كونسيكتيتور أديب</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="swiper-slide project-card" style="background-image: url('https://code-theme.com/html/findhouses/images/interior/p-1.jpg');">
+                        <a href="#">
+                            <div class="card-content">
+                                <h3>عنوان المشروع</h3>
+                                <p>لوريم إيبسوم دولور سيت أميت، كونسيكتيتور أديب</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Add Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </section>
+    <!-- Include Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <!-- Initialize Swiper -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                    },
+                    1024: {
+                        slidesPerView: 4,
+                        spaceBetween: 40,
+                    },
+                },
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
 </div>
 </body>
 </html>

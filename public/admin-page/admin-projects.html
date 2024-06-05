@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/dashboard.css" rel="stylesheet" type="text/css">
+    <link href="../css/projects.css" rel="stylesheet" type="text/css">
+    <title> المشاريع</title>
+</head>
+<body>
+<div class="page-content">
+    <div class="navbar">
+        <a href="../index.html" class="tablink" id="defaultOpen">الصفحه الرئيسة</a>
+        <a href="/admin-page" class="tablink">إضافة مشروع جديد</a>
+    </div>
+    <div class="container">
+        <div id="projectsContainer"></div>
+    </div>
+    <div id="loader">جاري التحميل...</div>
+    <div id="alertBox">
+        <p id="alertMessage"></p>
+        <button class="closeBtn">اغلاق</button>
+    </div>
+</div>
+<script type="module" src="../js/projectss.js"></script>
+</body>
+</html>

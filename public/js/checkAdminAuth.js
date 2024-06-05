@@ -1,8 +1,10 @@
-export async function checkAuth(dontRedirect = false) {
+export async function checkAdminAuth(dontRedirect = false) {
     const token = localStorage.getItem('authToken');
+    console.log("we are here")
 
     if (!token&&!dontRedirect) {
-        window.location.href = 'login.html';
+        console.log("redirected")
+        window.location.href = '../admin-page/admin-login.html';
         return;
     }
 
@@ -34,17 +36,19 @@ export async function checkAuth(dontRedirect = false) {
         if (response.ok) {
             document.querySelector('.page-content').style.display = 'block';
             if(dontRedirect) {
-                window.location.href = '/dashboard/index.html';
+                window.location.href = '../admin-page/index.html';
+
             }
+
         } else {
             if(!dontRedirect){
-            window.location.href = 'login.html';
+                window.location.href = '../admin-page/admin-login.html';
             }
         }
     } catch (error) {
         console.error('Error checking authentication:', error);
         if(!dontRedirect) {
-            window.location.href = 'login.html';
+            window.location.href = '../admin-page/admin-login.html';
         }
     }finally
     {

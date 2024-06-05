@@ -1,7 +1,7 @@
-import { checkAuth } from  "./checkauth.js"
+import { checkAdminAuth } from "./checkAdminAuth.js"
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await checkAuth(true)
+    await checkAdminAuth(true)
     const loginForm = document.getElementById('loginForm');
     const errorMessage = document.getElementById('errorMessage');
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('authToken', data.token);
-                window.location.href = '/dashboard/index.html';
+                window.location.href = '../admin-page/index.html';
             } else {
                 const errorData = await response.json();
                 let errorMsg = '';
