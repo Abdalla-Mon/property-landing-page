@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
-    <link href="/main.css" rel="stylesheet" type="text/css">
+    <link href="app.css" rel="stylesheet" type="text/css">
     <title>الحياه العصريه</title>
 </head>
 <body>
+<div id="loader-wrapper">
+    <div id="loader">
+        <div class="loading-indicator"></div>
+    </div>
+</div>
+        <img src="/uploads/logo.png" alt="Logo" class="loader-logo">
 <div class="page-content">
     <header class="header-absolute">
         <div class="container">
             <div class="navbar">
-                <img src="/uploads/logo.png" alt="Logo" class="logo">
+                <img src="/uploads/logo.png" alt="Logo" class="logo hidden">
                 <nav>
                     <ul class="nav-links">
                         <li><a href="#home">الصفحه الرئيسيه</a></li>
@@ -41,18 +47,26 @@
             </ul>
         </div>
     </header>
+
     <section class="hero">
         <div class="hero-content">
             <h1>أهلاً بكم في عالم إدارة العقارات</h1>
             <p>اكتشفوا معنا تجربة فريدة من نوعها في إدارة الممتلكات، حيث نقدم لكم خدمات شاملة بأعلى معايير الاحترافية والموثوقية.</p>
         </div>
+
     </section>
-    <!-- projects Section -->
+
     <section class="projects-section">
         <div class="container">
-            <div class="section-title">
-                <h2>المشاريع</h2>
-                
+            <div class="projects-header">
+
+                <div class="section-title">
+
+                    <h2>احدث المشاريع </h2>
+                </div>
+                <a href="#">
+                    <span>عرض الكل</span>
+                </a>
             </div>
             <div class="swiper-container">
                 <div class="swiper-wrapper">
@@ -106,41 +120,51 @@
             </div>
         </div>
     </section>
+
+    <section class="services-section">
+        <div class="container">
+            <div class="title-one  mb-50 xl-mb-30 lg-mb-20">
+                <h3>اكتشف خدماتنا </h3>
+                <p class="fs-24">شريكك الموثوق في كل معاملة عقارية.</p>
+            </div>
+            <div class="row">
+                    <div class="service-card text-center">
+                        <div class="icon">
+                            <img alt="icon" loading="lazy" width="150" height="150" decoding="async" src="/uploads/services/buy.svg">
+                        </div>
+                        <div class="">
+                            <h4 class="title">شراء عقار</h4>
+                            <p class="text">نوفر لك خيارات متنوعة لشراء العقارات بأفضل الأسعار.</p>
+                        </div>
+                </div>
+                    <div class="service-card text-center">
+                        <div class="icon">
+                            <img alt="icon" loading="lazy" width="150" height="150" decoding="async" src="/uploads/services/rent.svg">
+                        </div>
+                        <div class="">
+                            <h4 class="title">بيع عقار</h4>
+                            <p class="text">ساعدك في بيع عقارك بسرعة وبأفضل الأسعار.</p>
+                        </div>
+                </div>
+                    <div class=" service-card text-center">
+                        <div class="icon">
+                            <img alt="icon" loading="lazy" width="150" height="150" decoding="async" src="/uploads/services/sell.svg">
+                        </div>
+                        <div class="">
+                            <h4 class="title">استئجار عقار</h4>
+                            <p class="text">نوفر لك خيارات متنوعة لاستئجار العقارات بأفضل الأسعار.</p>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- projects Section -->
     <!-- Include Swiper JS -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <!-- Initialize Swiper -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var swiper = new Swiper('.swiper-container', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                breakpoints: {
-                    640: {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        spaceBetween: 30,
-                    },
-                    1024: {
-                        slidesPerView: 4,
-                        spaceBetween: 40,
-                    },
-                },
-            });
-        });
-    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script type="module" src="/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <script type="module" src="/js/app.js"></script>
 </div>
 </body>
 </html>

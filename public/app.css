@@ -1,8 +1,8 @@
 :root {
-    --primary-color: #445372; /* Retaining the primary color */
-    --secondary-color: #a3917b; /* Retaining the secondary color */
-    --background-color: #1a1a2e; /* Dark blue to match the night scene */
-    --text-color: #f4f7f6; /* Light text color for better readability on dark background */
+    --primary-color: #445372;
+    --secondary-color: #a3917b;
+    --background-color: #1a1a2e;
+    --text-color: #f4f7f6;
     --white: #fff;
     --light-gray: #ccc;
     --dark-gray: #666;
@@ -16,6 +16,7 @@ body {
     padding: 0;
     line-height: 1.6;
     scroll-behavior: smooth;
+    overflow: hidden;
 }
 
 .container {
@@ -24,13 +25,57 @@ body {
     padding: 0 20px;
 }
 
+/* Loader Styles */
+.hidden {
+    opacity: 0;
+}
+
+/* Loader Styles */
+#loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #293247, #3f3f3f);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loader-logo {
+    max-width: 150px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+}
+
+.loading-indicator {
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #293247;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin-top: 212px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Navbar Styles */
 .header-absolute {
     position: absolute;
     width: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(164, 145, 123, 0.15); /* Slightly transparent secondary color */
+    /*background-color: rgba(164, 145, 123, 0.15);*/
     box-shadow: none;
     z-index: 10;
     padding: 12px;
@@ -45,6 +90,12 @@ body {
 
 .navbar .logo {
     height: 50px;
+    opacity: 0; /* Hide the logo initially */
+    transition: opacity 0.3s;
+}
+
+.navbar .logo.hidden {
+    opacity: 0;
 }
 
 .navbar nav {
@@ -243,14 +294,42 @@ body {
 }
 
 /* projects */
+
+
+.projects-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+.projects-header a{
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: color 0.3s;
+
+}
 .section-title {
     position: relative;
     padding-right: 30px; /* Adjust padding to make space for the border */
-    margin: 20px 0; /* Adjust margin as needed */
     width: fit-content;
-        margin-left: auto;
-}
+    margin-left: auto;
+    margin-bottom: 15px;
 
+}
+.section-title h2{
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    @media  (   max-width:768px) {
+        font-size: 1.5rem;
+
+    }
+}
 .section-title:before {
     background-color: #3e4452; /* Border color */
     top: 0;
@@ -260,12 +339,13 @@ body {
     content: '';
     border-radius: 3px;
     position: absolute;
-
 }
+
+
 /* Projects Section */
 .projects-section {
-    background: url('https://code-theme.com/html/findhouses/images/bg/bg-white-3.png') no-repeat center center/cover;
-    padding: 60px 0;
+    background: url('https://code-theme.com/html/findhouses/images/bg/bg-white-3.png') 0 0 repeat;
+    padding: 80px 12px;
 }
 
 .swiper-container {
@@ -275,7 +355,9 @@ body {
 .swiper-wrapper {
     display: flex;
 }
-
+.swiper-slide{
+    min-height: 400px;
+}
 .project-card {
     position: relative;
     flex: 0 0 auto;
@@ -324,12 +406,11 @@ body {
     white-space: nowrap;
 }
 
-
 /* Swiper Navigation and Pagination */
-.swiper-container{
+.swiper-container {
     position: relative;
     overflow: hidden;
-    padding-bottom: 10px;
+    padding-bottom: 30px;
 }
 .swiper-button-next,
 .swiper-button-prev {
@@ -339,9 +420,10 @@ body {
 .swiper-pagination-bullet {
     background: var(--primary-color);
 }
-swiper-pagination{
-    bottom: -10px !important;
+.swiper-pagination {
+    bottom: 0 !important;
 }
+
 /* Media Queries */
 @media (max-width: 768px) {
     .project-card {
@@ -351,3 +433,79 @@ swiper-pagination{
 }
 
 
+
+.services-section {
+    padding: 80px 12px;
+    overflow: hidden;
+
+}
+/* Title Enhancements */
+.title-one h3 {
+    font-size: 2.5rem; /* Larger font size */
+    color: var(--primary-color); /* Primary color for the title */
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+
+.title-one p.fs-24 {
+    font-size: 1.25rem; /* Adjusted font size */
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #3e4452;
+}
+.services-section .row{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    margin-top: 20px;
+
+}
+
+.service-card {
+    background: var(--white);
+    padding: 40px 20px; /* Increased padding for better spacing */
+    border-radius: 12px; /* Slightly increased border radius for a smoother look */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Enhanced shadow for better depth */
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.service-card .icon img {
+
+    margin-bottom: 20px; /* Added margin for spacing */
+}
+
+.service-card h4.title {
+    font-size: 1.5rem; /* Slightly larger font size for title */
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.service-card p.text {
+    margin-bottom: 20px; /* Added bottom margin for better spacing */
+color: #8a7862;
+}
+
+/* Hide elements initially */
+.hero-content, .section-title{
+    opacity: 0;
+    transform: translateY(50px);
+}
+.title-one h3{
+    opacity: 0;
+    transform: translateY(-50px);
+    margin-top: 0;
+
+}
+.title-one p{
+    opacity: 0;
+    transform: translateX(-50px);
+}
