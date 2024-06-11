@@ -3,16 +3,6 @@ const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const fs = require('fs');
 
-// Schema validation using Joi
-const projectSchema = Joi.object({
-    id: Joi.number().optional(), // Allow id for update
-    projectName: Joi.string().max(255).required(),
-    aboutProject: Joi.string().required(),
-    video: Joi.string().optional(),
-    projectFeatures: Joi.array().items(Joi.string()).required(),
-    locationServices: Joi.array().items(Joi.string()).required(),
-    editedPaths: Joi.array().items(Joi.string()).optional() // Allow editedPaths for update
-});
 
 const userSchema = Joi.object({
     name: Joi.string().max(255).required(),
@@ -20,32 +10,30 @@ const userSchema = Joi.object({
     password: Joi.string().min(8).required(),
 });
 
-// Project services
+
+
 async function getProjects() {
     const [projects] = await pool.query('SELECT * FROM projects');
     for (const project of projects) {
         const [features] = await pool.query('SELECT * FROM features WHERE projectId = ?', [project.id]);
         const [services] = await pool.query('SELECT * FROM services WHERE projectId = ?', [project.id]);
         const [images] = await pool.query('SELECT * FROM images WHERE projectId = ?', [project.id]);
+        const [units] = await pool.query('SELECT * FROM units WHERE projectId = ?', [project.id]);
+
         project.features = features;
         project.services = services;
         project.images = images;
+        project.units = units;
     }
     return projects;
 }
 
 async function createProject(data, files) {
-    // Parse JSON strings
-    data.projectFeatures = JSON.parse(data.projectFeatures);
-    data.locationServices = JSON.parse(data.locationServices);
+    // Convert projectFeatures and locationServices to arrays
+    data.projectFeatures = data.projectFeatures ? JSON.parse(data.projectFeatures) : [];
+    data.locationServices = data.locationServices ? JSON.parse(data.locationServices) : [];
+    data.units = data.units ? JSON.parse(data.units) : [];
 
-    // Log parsed data for debugging
-    console.log('Files:creation', files);
-
-    const { error } = projectSchema.validate(data);
-    if (error) {
-        throw new Error(`Validation error: ${error.details[0].message}`);
-    }
 
     const [result] = await pool.query(
           'INSERT INTO projects (projectName, aboutProject, video) VALUES (?, ?, ?)',
@@ -57,19 +45,23 @@ async function createProject(data, files) {
         await pool.query('INSERT INTO features (projectId, feature) VALUES (?, ?)', [projectId, feature]);
     }
 
-    for (const service of data.locationServices) {
-        await pool.query('INSERT INTO services (projectId, service) VALUES (?, ?)', [projectId, service]);
+    for (const serviceObj of data.locationServices) {
+
+        const image = files.serviceImages.find((file)=>"/uploads/"+file.originalname===serviceObj.image);
+        await pool.query('INSERT INTO services (projectId, service, image) VALUES (?, ?, ?)', [projectId, serviceObj.service,image&&"/uploads/"+ image?.filename]);
     }
 
-    for (const file of files) {
-        console.log(file,"file")
-
+    for (const unit of data.units) {
+        await pool.query('INSERT INTO units (projectId, name, size, numberOfRooms, price) VALUES (?, ?, ?, ?, ?)', [projectId, unit.name, unit.size, unit.numberOfRooms, unit.price]);
+    }
+if(files&&files.files){
+    for (const file of files.files) {
         await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [projectId, `/uploads/${file.filename}`]);
     }
+}
 
     return getProjectById(projectId);
 }
-
 async function getProjectById(id) {
     const [projects] = await pool.query('SELECT * FROM projects WHERE id = ?', [id]);
     if (projects.length === 0) return null;
@@ -78,65 +70,69 @@ async function getProjectById(id) {
     const [features] = await pool.query('SELECT * FROM features WHERE projectId = ?', [id]);
     const [services] = await pool.query('SELECT * FROM services WHERE projectId = ?', [id]);
     const [images] = await pool.query('SELECT * FROM images WHERE projectId = ?', [id]);
+    const [units] = await pool.query('SELECT * FROM units WHERE projectId = ?', [id]);
 
     project.features = features;
     project.services = services;
     project.images = images;
+    project.units = units;
 
     return project;
 }
 
 async function updateProject(id, data, files, editedPaths) {
-    // Parse JSON strings
-    data.projectFeatures = JSON.parse(data.projectFeatures);
-    data.locationServices = JSON.parse(data.locationServices);
-
-    // Log parsed data for debugging
-    console.log('Files:', files);
-
-    const { error } = projectSchema.validate(data);
-    if (error) {
-        throw new Error(`Validation error: ${error.details[0].message}`);
-    }
+    data.projectFeatures = JSON.parse(data.projectFeatures || '[]');
+    data.services = JSON.parse(data.services || '[]');
+    data.units = JSON.parse(data.units || '[]');
 
     await pool.query(
           'UPDATE projects SET projectName = ?, aboutProject = ?, video = ? WHERE id = ?',
-          [data.projectName, data.aboutProject, data.video, id]
+          [data.projectName || null, data.aboutProject || null, data.video || null, id]
     );
 
-    // Clear old features, services, and images
     await pool.query('DELETE FROM features WHERE projectId = ?', [id]);
     await pool.query('DELETE FROM services WHERE projectId = ?', [id]);
+    await pool.query('DELETE FROM units WHERE projectId = ?', [id]);
 
-    // Insert new features
     for (const feature of data.projectFeatures) {
-        await pool.query('INSERT INTO features (projectId, feature) VALUES (?, ?)', [id, feature]);
+        await pool.query('INSERT INTO features (projectId, feature) VALUES (?, ?)', [id, feature || null]);
     }
 
-    // Insert new services
-    for (const service of data.locationServices) {
-        await pool.query('INSERT INTO services (projectId, service) VALUES (?, ?)', [id, service]);
+    for (const serviceObj of data.services) {
+        let imagePath =/uploads/+ serviceObj.image;
+        console.log(imagePath,"imagesss")
+        const image=files.serviceImages?.find((file) => file.originalname === serviceObj.image.split('/').pop());
+
+        if (image) {
+                imagePath = `/uploads/${image.filename}`;
+        }else{
+            imagePath ="/uploads/"+serviceObj.image.match(/[^/]*$/)
+        }
+        await pool.query('INSERT INTO services (projectId, service, image) VALUES (?, ?, ?)', [id, serviceObj.service, imagePath]);
     }
 
-    // Handle deleted image paths
+    for (const unit of data.units) {
+        await pool.query('INSERT INTO units (projectId, name, size, numberOfRooms, price) VALUES (?, ?, ?, ?, ?)', [id, unit.name || null, unit.size || null, unit.numberOfRooms || null, unit.price || null]);
+    }
+
     if (editedPaths) {
         for (const path of editedPaths) {
             await pool.query('DELETE FROM images WHERE filePath = ?', [path]);
-            console.log(path)
             fs.unlink(`public${path}`, (err) => {
                 if (err) console.error(`Error deleting file: ${path}`, err);
             });
         }
     }
 
-    // Insert new images
-    for (const file of files) {
-    console.log(file,"file")
-        await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [id, `/uploads/${file.filename}`]);
+    if (files && files.files) {
+        for (const file of files.files) {
+            await pool.query('INSERT INTO images (projectId, filePath) VALUES (?, ?)', [id, `/uploads/${file.filename}`]);
+        }
     }
 
     return getProjectById(id);
 }
+
 
 async function deleteProject(id) {
     // Fetch the images associated with the project
@@ -144,8 +140,8 @@ async function deleteProject(id) {
 
     // Delete the images from the file system
     for (const image of images) {
-        console.log(image)
-        const path = image.filePath
+        console.log(image);
+        const path = image.filePath;
         fs.unlink(`public${path}`, (err) => {
             if (err) console.error(`Error deleting file: ${path}`, err);
         });
@@ -158,7 +154,9 @@ async function deleteProject(id) {
     await pool.query('DELETE FROM projects WHERE id = ?', [id]);
     await pool.query('DELETE FROM features WHERE projectId = ?', [id]);
     await pool.query('DELETE FROM services WHERE projectId = ?', [id]);
+    await pool.query('DELETE FROM units WHERE projectId = ?', [id]);
 }
+
 // User services
 async function createUser(data) {
     const { error } = userSchema.validate(data);
@@ -188,6 +186,16 @@ async function updateUserPassword(id, password) {
     await pool.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id]);
 }
 
+async function getLatestProjects(limit = 5) {
+    const [projects] = await pool.query('SELECT * FROM projects ORDER BY id DESC LIMIT ?', [limit]);
+    for (const project of projects) {
+        const [images] = await pool.query('SELECT * FROM images WHERE projectId = ?', [project.id]);
+
+        project.images = images;
+    }
+    return projects;
+}
+
 module.exports = {
     getProjects,
     createProject,
@@ -197,5 +205,6 @@ module.exports = {
     createUser,
     getUserByEmail,
     deleteUser,
-    updateUserPassword
+    updateUserPassword,
+    getLatestProjects
 };

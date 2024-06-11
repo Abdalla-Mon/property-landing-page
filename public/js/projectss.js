@@ -40,39 +40,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         formContainer.classList.add('form-container');
 
         formContainer.innerHTML = `
-            <input type="text" name="projectName" value="${project.projectName}" placeholder="اسم المشروع" required>
-            <textarea name="aboutProject" placeholder="عن المشروع" required>${project.aboutProject}</textarea>
+            <input type="text" name="projectName" value="${project.projectName || ''}" placeholder="اسم المشروع">
+            <textarea name="aboutProject" placeholder="عن المشروع">${project.aboutProject || ''}</textarea>
             <div id="editFeaturesContainer-${project.id}">
                 <h3>مميزات المشروع</h3>
-                ${project.features.map(f => `
+                ${project.features?.map(f => `
                     <div class="featureServiceContainer">
-                        <input type="text" value="${f.feature}" class="feature-input" required>
+                        <input type="text" value="${f.feature}" class="feature-input">
                         <button type="button" class="removeBtn">X</button>
                     </div>`).join('')}
                 <button type="button" class="smallBtn addFeatureBtn">اضف ميزة</button>
             </div>
             <div id="editServicesContainer-${project.id}">
                 <h3>خدمات الموقع</h3>
-                ${project.services.map(s => `
-                    <div class="featureServiceContainer">
-                        <input type="text" value="${s.service}" class="service-input" required>
+                ${project.services?.map(s => `
+                    <div class="featureServiceContainer oldservices">
+                        <input type="text" value="${s.service}" class="service-input">
+                        <img src="${s.image}" class="serviceImagePreview" alt="Service Image">
+                      <input type="file" class="service-image hidden"  >
                         <button type="button" class="removeBtn">X</button>
                     </div>`).join('')}
                 <button type="button" class="smallBtn addServiceBtn">اضف خدمة</button>
             </div>
             <div id="editImagesContainer-${project.id}">
                 <h3>صور المشروع</h3>
-                <div>${project.images.map(i => `
+                <div>${project.images?.map(i => `
                     <div class="imageContainer" data-path="${i.filePath}">
                         <img src="${i.filePath}" class="previewImage" alt="Project Image">
                         <button type="button" class="removeBtn">X</button>
                     </div>`).join('')}</div>
-                <label for="imageInput-${project.id}" class="customFileInput smallBtn">اضف صوره</label>
-                <input type="file" id="imageInput-${project.id}" style="display:none">
+                <label for="imageInput-${project.id}" class="customFileInput smallBtn">اضف صوره<input type="file" id="imageInput-${project.id}" class="hidden"></label>
             </div>
             <h3>فيديو المشروع</h3>
             <p>الفيديو</p>
-            <input type="text" name="projectVideo" value="${project.video}" placeholder="رابط الفيديو" required>
+            <input type="text" name="projectVideo" value="${project.video || ''}" placeholder="رابط الفيديو">
+            <div id="editUnitsContainer-${project.id}">
+                <h3>وحدات المشروع</h3>
+                ${project.units?.map(u => `
+                    <div class="unitContainer">
+                        <input type="text" value="${u.name}" placeholder="اسم الوحدة">
+                        <input type="text" value="${u.size}" placeholder="الحجم">
+                        <input type="number" value="${u.numberOfRooms}" placeholder="عدد الغرف">
+                        <input type="number" value="${u.price}" placeholder="السعر">
+                        <button type="button" class="removeBtn">X</button>
+                    </div>`).join('')}
+                <button type="button" class="smallBtn addUnitBtn">اضف وحدة</button>
+            </div>
             <div class="button-container">
                 <button type="button" class="saveBtn">حفظ</button>
                 <button type="button" class="deleteBtn">حذف</button>
@@ -81,11 +94,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const editedPaths = new Set();
         let imagesArray = [];
-
+let servicesArray=[];
         formContainer.querySelector('.addFeatureBtn').addEventListener('click', () => {
             const featureInput = document.createElement('div');
             featureInput.classList.add('featureServiceContainer');
-            featureInput.innerHTML = `<input type="text" class="feature-input" placeholder="الميزه" required>
+            featureInput.innerHTML = `<input type="text" class="feature-input" placeholder="الميزه">
                                       <button type="button" class="removeBtn">X</button>`;
             formContainer.querySelector(`#editFeaturesContainer-${project.id}`).insertBefore(featureInput, formContainer.querySelector(`#editFeaturesContainer-${project.id} .addFeatureBtn`));
 
@@ -95,14 +108,66 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         formContainer.querySelector('.addServiceBtn').addEventListener('click', () => {
-            const serviceInput = document.createElement('div');
-            serviceInput.classList.add('featureServiceContainer');
-            serviceInput.innerHTML = `<input type="text" class="service-input" placeholder="الخدمه" required>
-                                      <button type="button" class="removeBtn">X</button>`;
-            formContainer.querySelector(`#editServicesContainer-${project.id}`).insertBefore(serviceInput, formContainer.querySelector(`#editServicesContainer-${project.id} .addServiceBtn`));
+            const serviceDiv = document.createElement('div');
+            serviceDiv.classList.add('featureServiceContainer');
+            const serviceInput = document.createElement('input');
+            serviceInput.type = 'text';
+            serviceInput.placeholder = 'الخدمه';
+            const imagePreview = document.createElement('img');
+            imagePreview.classList.add('serviceImagePreview', 'hidden');
+            const customFileInput = document.createElement('label');
+            customFileInput.classList.add('customFileInput');
+            customFileInput.textContent = 'رفع صورة للخدمة';
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.classList.add('hidden');
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = 'X';
+            removeBtn.classList.add('removeBtn');
 
-            serviceInput.querySelector('.removeBtn').addEventListener('click', () => {
-                formContainer.querySelector(`#editServicesContainer-${project.id}`).removeChild(serviceInput);
+            serviceDiv.appendChild(serviceInput);
+            serviceDiv.appendChild(imagePreview);
+            serviceDiv.appendChild(customFileInput);
+            serviceDiv.appendChild(imageInput);
+            serviceDiv.appendChild(removeBtn);
+            formContainer.querySelector(`#editServicesContainer-${project.id}`).appendChild(serviceDiv);
+
+            servicesArray.push(serviceDiv);
+
+            customFileInput.addEventListener('click', () => imageInput.click());
+
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                        customFileInput.classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeBtn.addEventListener('click', function() {
+                formContainer.querySelector(`#editServicesContainer-${project.id}`).removeChild(serviceDiv);
+                servicesArray = servicesArray.filter(item => item !== serviceDiv);
+            });
+        });
+
+        formContainer.querySelector('.addUnitBtn').addEventListener('click', () => {
+            const unitDiv = document.createElement('div');
+            unitDiv.classList.add('unitContainer');
+            unitDiv.innerHTML = `<input type="text" placeholder="اسم الوحدة">
+                                 <input type="text" placeholder="الحجم">
+                                 <input type="number" placeholder="عدد الغرف">
+                                 <input type="number" placeholder="السعر">
+                                 <button type="button" class="removeBtn">X</button>`;
+            formContainer.querySelector(`#editUnitsContainer-${project.id}`).insertBefore(unitDiv, formContainer.querySelector(`#editUnitsContainer-${project.id} .addUnitBtn`));
+
+            unitDiv.querySelector('.removeBtn').addEventListener('click', () => {
+                formContainer.querySelector(`#editUnitsContainer-${project.id}`).removeChild(unitDiv);
             });
         });
 
@@ -122,7 +187,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const imageDiv = document.createElement('div');
                     const image = document.createElement('img');
                     const removeBtn = document.createElement('button');
-
                     imageDiv.classList.add('imageContainer');
                     image.src = e.target.result;
                     image.classList.add('previewImage');
@@ -147,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         formContainer.querySelector('.saveBtn').addEventListener('click', async () => {
-            await saveProject(card, formContainer, project.id, editedPaths, imagesArray);
+            await saveProject(card, formContainer, project.id, editedPaths, imagesArray, servicesArray);
         });
 
         formContainer.querySelector('.deleteBtn').addEventListener('click', async () => {
@@ -160,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return card;
     }
 
-    async function saveProject(card, formContainer, projectId, editedPaths, imagesArray) {
+    async function saveProject(card, formContainer, projectId, editedPaths, imagesArray, servicesArray) {
         const loader = document.getElementById('loader');
         loader.style.display = 'flex';
 
@@ -168,28 +232,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         const aboutProject = formContainer.querySelector('textarea[name="aboutProject"]').value;
         const projectVideo = formContainer.querySelector('input[name="projectVideo"]').value;
 
-        const projectFeatures = Array.from(formContainer.querySelectorAll('.feature-input')).map(input => input.value);
-        const locationServices = Array.from(formContainer.querySelectorAll('.service-input')).map(input => input.value);
+        const projectFeatures = Array.from(formContainer.querySelectorAll('.feature-input'))?.map(input => input.value);
+        const services = servicesArray.map(div => ({
+            service: div.querySelector('input[type="text"]').value,
+            image: div.querySelector('input[type="file"]').files[0].name,
+            file:div.querySelector('input[type="file"]').files[0]
+        }));
+const oldServices=Array.from(formContainer.querySelectorAll('.oldservices')).map(div => ({
+            service: div.querySelector('input[type="text"]').value,
+            image: div.querySelector('img').src
+        }));
 
-        if (!projectName || !aboutProject || !projectVideo || projectFeatures.length === 0 || locationServices.length === 0) {
-            alertMessage.textContent = 'الرجاء ملء جميع الحقول.';
-            alertBox.style.backgroundColor = '#d9534f';
-            alertBox.style.display = 'block';
-            loader.style.display = 'none';
-            return;
-        }
+        const units = Array.from(formContainer.querySelectorAll('.unitContainer')).map(container => ({
+            name: container.querySelector('input[placeholder="اسم الوحدة"]').value,
+            size: container.querySelector('input[placeholder="الحجم"]').value,
+            numberOfRooms: container.querySelector('input[placeholder="عدد الغرف"]').value,
+            price: container.querySelector('input[placeholder="السعر"]').value
+        }));
 
         const formData = new FormData();
         formData.append('id', projectId);
         formData.append('projectName', projectName);
         formData.append('aboutProject', aboutProject);
         formData.append('projectFeatures', JSON.stringify(projectFeatures));
-        formData.append('locationServices', JSON.stringify(locationServices));
+        formData.append('services', JSON.stringify([...oldServices,...services]));
         formData.append('video', projectVideo);
+        formData.append('units', JSON.stringify(units));
         formData.append('editedPaths', JSON.stringify(Array.from(editedPaths)));
+        services.forEach(service => {
+            if (service.file) {
+                formData.append('serviceImages', service.file);
+            }
+        });
         imagesArray.forEach(file => formData.append('files', file));
-
-        const token = localStorage.getItem('authToken'); // Retrieve the token from localStorage
+        servicesArray.forEach(serviceDiv => {
+        console.log(serviceDiv,"serviceDiv")
+            const imageInput = serviceDiv.querySelector('.service-image');
+            if (imageInput && imageInput.files[0]) {
+                formData.append('serviceImages', imageInput.files[0]);
+            }
+        });
+        const token = localStorage.getItem('authToken');
 
         try {
             const response = await fetch('/api/projects', {
@@ -206,29 +289,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alertBox.style.backgroundColor = '#445372';
                 alertBox.style.display = 'block';
 
-                // Update card content with the new data
                 const newCard = createProjectCard(result.project);
                 projectsContainer.replaceChild(newCard, card);
             } else {
                 const errorText = await response.text();
                 console.error('فشل في التحديث:', errorText);
                 alertMessage.textContent = 'فشل في التحديث: ' + errorText;
-                alertBox.style.backgroundColor = '#d9534f'; // Bootstrap danger color
+                alertBox.style.backgroundColor = '#d9534f';
                 alertBox.style.display = 'block';
             }
         } catch (error) {
             console.error('حدث خطأ أثناء التحديث:', error);
             alertMessage.textContent = 'حدث خطأ أثناء التحديث: ' + error.message;
-            alertBox.style.backgroundColor = '#d9534f'; // Bootstrap danger color
+            alertBox.style.backgroundColor = '#d9534f';
             alertBox.style.display = 'block';
         }
     }
-
     async function deleteProject(card, projectId) {
         const loader = document.getElementById('loader');
         loader.style.display = 'flex';
 
-        const token = localStorage.getItem('authToken'); // Retrieve the token from localStorage
+        const token = localStorage.getItem('authToken');
 
         try {
             const response = await fetch(`/api/projects/${projectId}`, {
@@ -247,15 +328,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const errorText = await response.text();
                 console.error('فشل في الحذف:', errorText);
                 alertMessage.textContent = 'فشل في الحذف: ' + errorText;
-                alertBox.style.backgroundColor = '#d9534f'; // Bootstrap danger color
+                alertBox.style.backgroundColor = '#d9534f';
                 alertBox.style.display = 'block';
             }
         } catch (error) {
             console.error('حدث خطأ أثناء الحذف:', error);
             alertMessage.textContent = 'حدث خطأ أثناء الحذف: ' + error.message;
-            alertBox.style.backgroundColor = '#d9534f'; // Bootstrap danger color
+            alertBox.style.backgroundColor = '#d9534f';
             alertBox.style.display = 'block';
         }
     }
-
 });
